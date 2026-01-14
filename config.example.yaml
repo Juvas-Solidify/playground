@@ -1,0 +1,26 @@
+# Azure DevOps Lead Finder Configuration
+# Copy this file to ~/.ado-finder/config.yaml
+
+sources:
+  linkedin:
+    enabled: true
+    max_results_per_query: 100
+    delay_seconds: [2, 5]  # Random delay range between requests
+  indeed:
+    enabled: false
+    max_results_per_query: 100
+    delay_seconds: [2, 5]
+
+# Search queries to use when searching for Azure DevOps related jobs
+search_queries:
+  - "Azure DevOps"
+  - "Azure DevOps Engineer"
+  - "Azure Pipelines"
+  - "Azure Boards"
+
+# Regions/countries to search in
+regions:
+  - Sweden
+  - Norway
+  - Denmark
+  - Finland
