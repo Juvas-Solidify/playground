@@ -52,14 +52,35 @@ class LinkedInScraper(BaseScraper):
             return
 
         self._playwright = sync_playwright().start()
-        self._browser = self._playwright.chromium.launch(
-            headless=True,
-            args=[
+
+        # Try to find an existing chromium installation
+        import os
+        from pathlib import Path
+
+        executable_path = None
+        pw_cache = Path.home() / ".cache" / "ms-playwright"
+        if pw_cache.exists():
+            # Look for any chromium version
+            for chromium_dir in sorted(pw_cache.glob("chromium-*"), reverse=True):
+                chrome_path = chromium_dir / "chrome-linux" / "chrome"
+                if chrome_path.exists():
+                    executable_path = str(chrome_path)
+                    logger.info(f"Using existing chromium at: {executable_path}")
+                    break
+
+        launch_args = {
+            "headless": True,
+            "args": [
                 "--disable-blink-features=AutomationControlled",
                 "--disable-dev-shm-usage",
                 "--no-sandbox",
             ]
-        )
+        }
+
+        if executable_path:
+            launch_args["executable_path"] = executable_path
+
+        self._browser = self._playwright.chromium.launch(**launch_args)
 
         context = self._browser.new_context(
             user_agent=get_random_user_agent(),
